@@ -34,6 +34,8 @@ If a PostToolUse hook runs `tsc --noEmit` (or any full-project check) on every e
 
 Use [scripts/lint-after-edit.sh](scripts/lint-after-edit.sh): per-file `ruff` for Python, incremental `tsc` with `--tsBuildInfoFile` under `~/.claude/cache/` for TypeScript, automatic fallback for old tsc versions. Measured: 4.25s → 1.38s per edit; the gap grows with repo size.
 
+To see what the hook is doing (file detected, tsconfig found, commands, timings), run with `FAST_CLAUDE_DEBUG=1` — it appends to `~/.claude/cache/fast-claude-debug.log`.
+
 Anti-patterns:
 
 - **Don't swap tsc for eslint** — eslint does not typecheck; you silently lose the guardrail.
@@ -54,6 +56,40 @@ Each permission prompt costs seconds to minutes of human wait. In `settings.json
 - Add **read-only** patterns only: `Bash(git status:*)`, `Bash(git diff:*)`, `Bash(git log:*)`, `Bash(ls:*)`.
 - For remote hosts, allowlist a wrapper script that runs only fixed read-only commands (status, logs) — not `ssh:*`.
 - **Never allowlist broad wildcards** (`Bash(ssh:*)`, `Bash(git:*)`, `Bash(curl:*)`). Combined with auto-accept modes, they execute mutating commands on production, `git remote add` + push (code exfiltration), or curl POSTs with no human checkpoint. If a prompt injection or model error fires one, there is no undo.
+
+### Complete example: `~/.claude/settings.json`
+
+Steps 2 and 4 combined in one working config (replace `/Users/you` with your home path — hooks need absolute paths):
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(ls:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/you/.claude/hooks/lint-after-edit.sh",
+            "timeout": 120,
+            "statusMessage": "Lint/typecheck edited file..."
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+MCP servers are not disabled here — that's per project via `/mcp` → toggle (Step 3), so account-level connectors keep working everywhere else.
 
 ## Step 5: Models and effort
 

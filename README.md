@@ -29,6 +29,30 @@ git clone https://github.com/leonardobissoli/fast-claude .claude/skills/fast-cla
 
 Then just tell Claude Code "Claude Code feels slow" — the skill triggers on that. Or read [SKILL.md](SKILL.md) yourself; it's short.
 
+## Troubleshooting
+
+**Hook doesn't run**
+- Script must be executable: `chmod +x ~/.claude/hooks/lint-after-edit.sh`.
+- The `command` in settings.json must be an **absolute** path (no `~`).
+- `jq` must be installed — without it the hook warns on stderr and no-ops.
+- Restart the session after editing hooks in settings.json (hooks are read at startup).
+
+**tsc still slow**
+- Run an edit with `FAST_CLAUDE_DEBUG=1` and check timings in `~/.claude/cache/fast-claude-debug.log`.
+- Confirm incremental state is being written: `ls ~/.claude/cache/tsbuildinfo/`. If empty, your tsc may be too old for `--incremental` with `--noEmit` (the hook falls back to a full check — upgrade TypeScript).
+- First run after a cache wipe is always a full check; the speedup shows from the second edit on.
+
+**Permission prompts still appear**
+- Rule syntax is exact: `Bash(git status:*)` — tool name, command prefix, then `:*`. `Bash(git status)` only matches the bare command with no arguments.
+- Rules live in the settings file that's actually loaded — check `/permissions` in-session to see what's active.
+
+## Tests
+
+```bash
+brew install bats-core   # or: apt install bats
+bats tests/
+```
+
 ## Safety notes
 
 The skill is opinionated about what **not** to do:
