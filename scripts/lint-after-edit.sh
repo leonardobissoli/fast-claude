@@ -27,6 +27,16 @@ dbg() {
   printf '%s %s\n' "$(date '+%Y-%m-%dT%H:%M:%S')" "$*" >> "$HOME/.claude/cache/fast-claude-debug.log"
 }
 
+# Millisecond clock: EPOCHREALTIME on bash >= 5, else jq's float clock
+# (macOS ships bash 3.2 and BSD date has no %N). Only used for debug timings.
+now_ms() {
+  if [ -n "${EPOCHREALTIME:-}" ]; then
+    printf '%s\n' "$EPOCHREALTIME" | awk -F. '{ printf "%d", $1 * 1000 + substr($2 "000", 1, 3) }'
+  else
+    jq -n 'now * 1000 | floor'
+  fi
+}
+
 if ! command -v jq >/dev/null 2>&1; then
   # Warn instead of blocking: without jq we can't parse the payload, but
   # failing every edit over a missing dependency is worse than no guard.
@@ -51,7 +61,8 @@ dbg "file: $f"
 
 status=0
 out=""
-start=$SECONDS
+start=0
+[ "${FAST_CLAUDE_DEBUG:-0}" = "1" ] && start=$(now_ms)
 
 case "$f" in
   *.py)
@@ -101,7 +112,9 @@ case "$f" in
     ;;
 esac
 
-dbg "done: status=$status elapsed=$((SECONDS - start))s"
+if [ "${FAST_CLAUDE_DEBUG:-0}" = "1" ]; then
+  dbg "done: status=$status elapsed=$(( $(now_ms) - start ))ms"
+fi
 
 if [ "$status" -ne 0 ]; then
   echo "Check failed for $f:" >&2

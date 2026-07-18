@@ -6,7 +6,7 @@ Born from a real optimization session: audit where the latency actually comes fr
 
 ## What it covers
 
-1. **Measure first** — `/context`, version, timed turns. No cargo-cult tuning.
+1. **Measure first** — `/context`, version, timed turns. No cargo-cult tuning. [`scripts/benchmark.sh`](scripts/benchmark.sh) snapshots hook latency, startup context, permission waits, and per-turn latency, then renders a before/after HTML dashboard ([sample](docs/sample-benchmark.html)) so every change proves itself with a number.
 2. **Per-edit hooks** — incremental typecheck with build state outside the repo. Measured: **4.25s → 1.38s per edit** (grows with repo size). Ready-to-use hook in [`scripts/lint-after-edit.sh`](scripts/lint-after-edit.sh).
 3. **Per-session context** — trim MCP servers per project, audit plugin injections, relocate single-project skills.
 4. **Permission waits** — the largest perceived latency. Safe read-only allowlist patterns; never broad wildcards.
@@ -47,6 +47,8 @@ Then just tell Claude Code "Claude Code feels slow" — the skill triggers on th
 - Rules live in the settings file that's actually loaded — check `/permissions` in-session to see what's active.
 
 ## Tests
+
+Covers both `scripts/lint-after-edit.sh` and `scripts/benchmark.sh`:
 
 ```bash
 brew install bats-core   # or: apt install bats

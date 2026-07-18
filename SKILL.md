@@ -20,11 +20,22 @@ Core principle: **measure first, change one thing at a time, and never trade sec
 | Always waiting on permission prompts | Literal one-shot allowlist rules | Step 4 |
 | Turns slow down as the session grows | Context accumulation | Step 6 |
 
-## Step 1: Measure
+## Step 1: Measure (before/after protocol)
 
 - `claude update`, note `claude --version`.
 - `/context` in a fresh session: record system-prompt, MCP-tool, and skill token counts. If MCP tools show as deferred, trimming them gains little — measure before cutting.
-- Time one turn that edits a file in your biggest repo.
+- Export `FAST_CLAUDE_DEBUG=1` in your shell profile so the edit hook logs real timings.
+
+Then use [scripts/benchmark.sh](scripts/benchmark.sh) to prove each change moved a number:
+
+1. Use Claude Code normally for a day, then `benchmark.sh snapshot before`.
+2. Apply **one** change (Steps 2–6).
+3. Use it for another day, then `benchmark.sh snapshot after`.
+4. `benchmark.sh compare` for the text table, or `benchmark.sh report` for an HTML dashboard over all snapshots ([sample](docs/sample-benchmark.html)). Snapshot once per change (`baseline` → `incremental-hook` → `mcp-trim` → …) and the dashboard shows which change bought what.
+
+What each metric validates: hook p50/p95 → Step 2; startup context tokens → Step 3; human waits (>10s gaps waiting on you) → Step 4; per-turn latency → Step 6.
+
+No patience for a day of data? `benchmark.sh hook <file>` times the edit hook right now: cold, warm, and the non-incremental "before" variant. Note the incremental win only shows on repos big enough for tsc to be slow in the first place.
 
 Re-measure after every change. A fix that doesn't move a number isn't a fix.
 
