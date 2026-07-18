@@ -13,6 +13,41 @@ Born from a real optimization session: audit where the latency actually comes fr
 5. **Models and effort** — where a cheaper model is free speed and where it silently degrades your results.
 6. **Session hygiene** — `/clear`, `--continue`, `/compact`, and when each helps or hurts.
 
+## Did it actually work? Benchmark it
+
+Every optimization must prove itself with a number. `scripts/benchmark.sh` does the measuring:
+
+```bash
+export FAST_CLAUDE_DEBUG=1                    # let the edit hook log real timings
+# ...use Claude Code normally for a day...
+scripts/benchmark.sh snapshot baseline
+
+# apply ONE optimization (SKILL.md Steps 2–6), use it for another day
+scripts/benchmark.sh snapshot incremental-hook
+
+scripts/benchmark.sh compare baseline incremental-hook
+scripts/benchmark.sh report                   # HTML dashboard over all snapshots
+scripts/benchmark.sh hook src/app.ts          # instant hook bench — no day of waiting
+```
+
+`compare` prints deltas in the terminal:
+
+```
+=== fast-claude benchmark: baseline vs incremental-hook ===
+                   baseline     incremental-hook  delta
+Hook p50:          4250ms       1380ms       -68%
+Hook p95:          6100ms       2010ms       -67%
+Startup context:   48.2k tok    48.2k tok    0%
+Turn p50:          22s          18s          -18%
+Human waits:       9            9            0%
+```
+
+`report` renders a dashboard of all snapshots — one per optimization, so you see which change bought what ([live sample](docs/sample-benchmark.html)):
+
+![benchmark dashboard](docs/sample-benchmark.jpg)
+
+Metrics come from the hook's debug log and from Claude Code's own session transcripts — no manual timing. Mapping: hook latency → Step 2, startup context → Step 3, human waits → Step 4, turn latency → Step 6.
+
 ## Install
 
 Personal (all projects):
