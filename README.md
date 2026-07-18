@@ -2,7 +2,7 @@
 
 A [Claude Code](https://claude.com/claude-code) skill that makes Claude Code **fast without losing quality**.
 
-> 🇧🇷 **Não é desenvolvedor?** Leia o **[Guia para iniciantes](docs/GUIA.md)** — passo a passo simples, em português, do zero até o painel de resultados.
+> **New to this / not a developer?** Read the **[Beginner's Guide](docs/BEGINNERS.md)** — simple step by step, from zero to the results dashboard.
 
 Born from a real optimization session: audit where the latency actually comes from, fix it with measured results, and — just as important — document the "speedups" that look tempting but silently destroy quality or security (they're in the skill's *Common mistakes* table).
 
