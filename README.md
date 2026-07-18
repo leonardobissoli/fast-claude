@@ -46,6 +46,17 @@ Human waits:       9            9            0%
 
 ![benchmark dashboard](docs/sample-benchmark.jpg)
 
+**How to read it:** each row is a snapshot you saved, in chronological order — light bars are earlier states, the dark bar is your current state, and the ▼/▲ badge compares first vs latest. Lower is always better. The sample's names show the intended workflow, one snapshot per optimization applied:
+
+| Snapshot | Meaning |
+|---|---|
+| `01-baseline` | before changing anything — your starting point |
+| `02-incremental-hook` | after making the edit hook incremental (SKILL.md Step 2) |
+| `03-mcp-trim` | after disabling unused MCP servers/plugins (Step 3) |
+| `04-allowlist` | after allowlisting read-only commands (Step 4) |
+
+Named this way, the dashboard answers "which change bought what": the hook p50 drop appears at `02`, the startup-context drop at `03`, the human-wait drop at `04`. The dashboard itself also carries a "How to read this dashboard" section at the top.
+
 Metrics come from the hook's debug log and from Claude Code's own session transcripts — no manual timing. Mapping: hook latency → Step 2, startup context → Step 3, human waits → Step 4, turn latency → Step 6.
 
 ## Install

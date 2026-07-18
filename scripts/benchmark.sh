@@ -316,6 +316,11 @@ cat <<'HTMLHEAD'
   .spark polyline { fill: none; stroke: var(--bar-strong); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
   details { margin-top: 28px; }
   summary { cursor: pointer; color: var(--ink-2); font-size: 14px; }
+  .howto { margin: 0 0 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+  .howto[open] summary { margin-bottom: 8px; }
+  .howto ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; }
+  .howto li { margin: 3px 0; }
+  .howto .chip { display: inline-block; width: 26px; height: 9px; border-radius: 0 3px 3px 0; vertical-align: baseline; }
   table { border-collapse: collapse; margin-top: 12px; width: 100%; font-size: 13px; }
   th, td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
   th:first-child, td:first-child { text-align: left; }
@@ -326,6 +331,16 @@ cat <<'HTMLHEAD'
 <body>
 <h1>fast-claude — benchmark dashboard</h1>
 <p class="sub" id="sub"></p>
+<details class="howto">
+  <summary>How to read this dashboard</summary>
+  <ul>
+    <li><strong>Each row is a snapshot</strong> — a measurement you saved with <code>benchmark.sh snapshot &lt;name&gt;</code>, shown oldest → newest. Name snapshots after the change you just applied (e.g. <code>baseline</code> before touching anything, then <code>incremental-hook</code> after fixing the edit hook), so each row answers "what did that change buy?"</li>
+    <li><span class="chip" style="background:var(--bar-muted)"></span> earlier snapshots &nbsp;·&nbsp; <span class="chip" style="background:var(--bar-strong)"></span> <strong>latest snapshot</strong> (your current state). Shorter bar = faster/smaller = better; <strong>lower is better for every metric here</strong>.</li>
+    <li>The <strong>badge</strong> (▼/▲ %) compares the <em>first</em> snapshot to the <em>latest</em>: ▼ green = improved, ▲ red = regressed.</li>
+    <li>The top <strong>cards</strong> show the latest value of the four headline metrics, one per skill step: hook latency (Step 2), startup context (Step 3), waiting on permission prompts (Step 4), turn latency (Step 6).</li>
+    <li>The <strong>trend line</strong> traces the metric across all snapshots — a drop right after a snapshot means that change caused it.</li>
+  </ul>
+</details>
 <div class="cards" id="cards"></div>
 <div id="sections"></div>
 <details><summary>Raw values (table view)</summary><div id="tablewrap"></div></details>
