@@ -61,6 +61,8 @@ Named this way, the dashboard answers "which change bought what": the hook p50 d
 
 Metrics come from the hook's debug log and from Claude Code's own session transcripts — no manual timing. Mapping: hook latency → Step 2, startup context → Step 3, human waits → Step 4, turn latency → Step 6.
 
+Full metric-by-metric reference (definitions, worked examples, pitfalls): [docs/METRICS.md](docs/METRICS.md).
+
 ## Install
 
 Personal (all projects):

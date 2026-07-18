@@ -82,6 +82,7 @@
     <li>The <strong>badge</strong> (▼/▲ %) compares the <em>first</em> snapshot to the <em>latest</em>: ▼ green = improved, ▲ red = regressed.</li>
     <li>The top <strong>cards</strong> show the latest value of the four headline metrics, one per skill step: hook latency (Step 2), startup context (Step 3), waiting on permission prompts (Step 4), turn latency (Step 6).</li>
     <li>The <strong>trend line</strong> traces the metric across all snapshots — a drop right after a snapshot means that change caused it.</li>
+    <li>Full metric reference: <a href="https://github.com/leonardobissoli/fast-claude/blob/main/docs/METRICS.md">docs/METRICS.md</a>.</li>
   </ul>
 </details>
 <div class="cards" id="cards"></div>
@@ -171,7 +172,7 @@ const DATA = [
     }
   }
 ];
-const GENERATED = "2026-07-18 17:08";
+const GENERATED = "2026-07-18 17:19";
 const METRICS = [
   { path: ["hook","p50_ms"],            label: "Hook p50",          unit: "ms",  step: "Step 2 — per-edit hooks", desc: "Typical delay the automatic file check adds after each edit — half of all edits were faster than this." },
   { path: ["hook","p95_ms"],            label: "Hook p95",          unit: "ms",  step: "Step 2 — per-edit hooks", desc: "Worst-case delay of the file check — 95% of edits were faster than this." },

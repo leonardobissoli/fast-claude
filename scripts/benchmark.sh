@@ -342,6 +342,7 @@ cat <<'HTMLHEAD'
     <li>The <strong>badge</strong> (▼/▲ %) compares the <em>first</em> snapshot to the <em>latest</em>: ▼ green = improved, ▲ red = regressed.</li>
     <li>The top <strong>cards</strong> show the latest value of the four headline metrics, one per skill step: hook latency (Step 2), startup context (Step 3), waiting on permission prompts (Step 4), turn latency (Step 6).</li>
     <li>The <strong>trend line</strong> traces the metric across all snapshots — a drop right after a snapshot means that change caused it.</li>
+    <li>Full metric reference: <a href="https://github.com/leonardobissoli/fast-claude/blob/main/docs/METRICS.md">docs/METRICS.md</a>.</li>
   </ul>
 </details>
 <div class="cards" id="cards"></div>

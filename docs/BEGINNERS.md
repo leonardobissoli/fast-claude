@@ -112,6 +112,7 @@ This creates a file called `benchmark-dashboard.html` — double-click it and it
 - **The 4 cards at the top** are the summary: file-check time, session-start baggage, permission-wait time, time per answer.
 - **The little trend line** shows WHERE the drop happened — if it fell right after the `03-mcp-trim` photo, that change is the one that paid off.
 - The dashboard itself has a **"How to read this dashboard"** section at the top with this same summary.
+- Want each metric explained in depth? See the [metric reference](METRICS.md).
 
 Reading the sample above: the file check dropped from 4.2s to 1.4s at optimization `02`, session baggage dropped 35% at `03`, and permission waiting plummeted 87% at `04`. Every change proved its worth.
 

@@ -100,7 +100,7 @@ EOF
   grep -Eq '"p50_ms": ?1000' "$out"
   grep -q 'const DATA' "$out"
   grep -q 'const GENERATED' "$out"
-  grep -q 'automatic file check' "$out"
+  grep -q 'METRICS.md' "$out"
 }
 
 @test "report: no snapshots -> exit 1 with message" {
