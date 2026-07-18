@@ -99,6 +99,7 @@ EOF
   grep -q '"s3"' "$out"
   grep -Eq '"p50_ms": ?1000' "$out"
   grep -q 'const DATA' "$out"
+  grep -q 'const GENERATED' "$out"
   grep -q 'automatic file check' "$out"
 }
 

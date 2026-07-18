@@ -192,7 +192,9 @@ cmd_report() {
   set -- "$BENCHDIR"/*.json
   [ -f "$1" ] || { echo "no snapshots in $BENCHDIR (run: benchmark.sh snapshot <name>)" >&2; exit 1; }
   data=$(jq -s 'sort_by(.timestamp)' "$@")
-  { render_report_head; printf 'const DATA = %s;\n' "$data"; render_report_tail; } > "$out"
+  { render_report_head
+    printf 'const DATA = %s;\nconst GENERATED = "%s";\n' "$data" "$(date '+%Y-%m-%d %H:%M')"
+    render_report_tail; } > "$out"
   echo "wrote: $out ($(printf '%s' "$data" | jq 'length') snapshots)"
 }
 
@@ -401,7 +403,8 @@ const spark = (vals) => {
 };
 
 document.getElementById("sub").textContent =
-  DATA.length + " snapshots: " + DATA.map(s => s.name).join(" → ");
+  DATA.length + " snapshots: " + DATA.map(s => s.name).join(" → ") +
+  " · generated " + GENERATED + " — run benchmark.sh report again and reload this page to update";
 
 document.getElementById("cards").innerHTML = CARDS.map(c => {
   const vals = series(c), fl = firstLast(vals);
