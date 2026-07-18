@@ -40,6 +40,7 @@
   .card .d { font-size: 13px; }
   .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; }
   .section h2 { font-size: 15px; display: flex; align-items: baseline; gap: 8px; }
+  .section .desc { color: var(--ink-2); font-size: 12.5px; margin: 2px 0 0; }
   .section .step { color: var(--muted); font-size: 12px; font-weight: 400; }
   .badge { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 99px; margin-left: auto; }
   .badge.good { color: var(--good); background: var(--good-bg); }
@@ -171,20 +172,20 @@ const DATA = [
   }
 ];
 const METRICS = [
-  { path: ["hook","p50_ms"],            label: "Hook p50",          unit: "ms",  step: "Step 2 — per-edit hooks" },
-  { path: ["hook","p95_ms"],            label: "Hook p95",          unit: "ms",  step: "Step 2 — per-edit hooks" },
-  { path: ["hook","fail_rate"],         label: "Hook fail rate",    unit: "%",   step: "Step 2 — per-edit hooks", scale: 100 },
-  { path: ["session","startup_tokens"], label: "Startup context",   unit: "tok", step: "Step 3 — per-session context" },
-  { path: ["session","wait_total_s"],   label: "Human wait total",  unit: "s",   step: "Step 4 — permission waits" },
-  { path: ["session","waits"],          label: "Human waits",       unit: "",    step: "Step 4 — permission waits" },
-  { path: ["session","turn_p50_s"],     label: "Turn p50",          unit: "s",   step: "Step 6 — session hygiene" },
-  { path: ["session","turn_p90_s"],     label: "Turn p90",          unit: "s",   step: "Step 6 — session hygiene" },
+  { path: ["hook","p50_ms"],            label: "Hook p50",          unit: "ms",  step: "Step 2 — per-edit hooks", desc: "Typical delay the automatic file check adds after each edit — half of all edits were faster than this." },
+  { path: ["hook","p95_ms"],            label: "Hook p95",          unit: "ms",  step: "Step 2 — per-edit hooks", desc: "Worst-case delay of the file check — 95% of edits were faster than this." },
+  { path: ["hook","fail_rate"],         label: "Hook fail rate",    unit: "%",   step: "Step 2 — per-edit hooks", scale: 100, desc: "How often the file check found a real problem and blocked — should stay roughly stable; a big drop may mean checks stopped running." },
+  { path: ["session","startup_tokens"], label: "Startup context",   unit: "tok", step: "Step 3 — per-session context", desc: "How much baggage (tokens) every session carries before you type anything — MCP servers, plugins and skills." },
+  { path: ["session","wait_total_s"],   label: "Human wait total",  unit: "s",   step: "Step 4 — permission waits", desc: "Total time Claude sat idle waiting for you to approve permission prompts." },
+  { path: ["session","waits"],          label: "Human waits",       unit: "",    step: "Step 4 — permission waits", desc: "How many times Claude had to stop and wait for your approval." },
+  { path: ["session","turn_p50_s"],     label: "Turn p50",          unit: "s",   step: "Step 6 — session hygiene", desc: "Typical wall-clock time from your message to Claude's finished answer." },
+  { path: ["session","turn_p90_s"],     label: "Turn p90",          unit: "s",   step: "Step 6 — session hygiene", desc: "Slow-turn time — 90% of answers arrived faster than this." },
 ];
 const CARDS = [
-  { label: "Hook p50",        path: ["hook","p50_ms"],            unit: "ms" },
-  { label: "Startup context", path: ["session","startup_tokens"], unit: "tok" },
-  { label: "Wait total",      path: ["session","wait_total_s"],   unit: "s" },
-  { label: "Turn p50",        path: ["session","turn_p50_s"],     unit: "s" },
+  { label: "Hook p50",        path: ["hook","p50_ms"],            unit: "ms",  desc: "Typical delay the automatic file check adds after each edit — half of all edits were faster than this." },
+  { label: "Startup context", path: ["session","startup_tokens"], unit: "tok", desc: "How much baggage (tokens) every session carries before you type anything — MCP servers, plugins and skills." },
+  { label: "Wait total",      path: ["session","wait_total_s"],   unit: "s",   desc: "Total time Claude sat idle waiting for you to approve permission prompts." },
+  { label: "Turn p50",        path: ["session","turn_p50_s"],     unit: "s",   desc: "Typical wall-clock time from your message to Claude's finished answer." },
 ];
 
 const get = (s, p) => p.reduce((o, k) => (o == null ? null : o[k]), s);
@@ -224,7 +225,7 @@ document.getElementById("sub").textContent =
 document.getElementById("cards").innerHTML = CARDS.map(c => {
   const vals = series(c), fl = firstLast(vals);
   const last = vals.filter(x => x.v != null).pop();
-  return `<div class="card"><div class="k">${c.label}</div>
+  return `<div class="card" title="${c.desc}"><div class="k">${c.label}</div>
     <div class="v">${last ? fmt(last.v, c.unit) : "–"}</div>
     <div class="d">${deltaBadge(fl)}</div></div>`;
 }).join("");
@@ -241,6 +242,7 @@ document.getElementById("sections").innerHTML = METRICS.map(m => {
        <span class="track"><span class="bar" style="width:${Math.max(1.5, x.v / max * 100)}%"></span></span>
        <span class="val">${fmt(x.v, m.unit, m.scale)}</span></div>`).join("");
   return `<div class="section"><h2>${m.label} <span class="step">${m.step}</span>${deltaBadge(firstLast(vals))}</h2>
+    <p class="desc">${m.desc}</p>
     <div class="rows">${rows}</div>${spark(vals)}</div>`;
 }).join("");
 
